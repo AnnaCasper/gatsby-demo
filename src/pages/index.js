@@ -1,22 +1,47 @@
-import React from "react"
-import { Link } from "gatsby"
+import React from 'react'
+import { graphql } from "gatsby";
+import Hero1 from '../components/Hero1'
+import Hero2 from '../components/Hero2'
+import Feat1 from '../components/Feat1'
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
-
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
+const IndexPage = ({data}) => (
+  <div>
+    <h1>{data.contentfulPage.title}</h1>
+    {data.contentfulPage.contentModules?.map((content, i) => {
+      if(content.__typename === 'ContentfulHero1') {
+        return <Hero1 key={i} content={content}/>
+      } else if(content.__typename === 'ContentfulHero2') {
+        return <Hero2 key={i} content={content}/>
+      } else if(content.__typename === 'ContentfulFeat1') {
+        return <Feat1 key={i} content={content}/>
+      } else {
+        return null
+      }
+    })}
+  </div>
 )
 
 export default IndexPage
+
+export const query = graphql`
+  query Page($slug: String) {
+    contentfulPage(slug: {eq: $slug}) {
+      title
+      slug
+      contentModules {
+        ... on Node {
+          ... on ContentfulHero1 {
+            header
+          }
+          ... on ContentfulHero2 {
+            header
+          }
+          ... on ContentfulFeat1 {
+            header
+            cta
+          }
+        }
+      }
+    }
+  }
+`
