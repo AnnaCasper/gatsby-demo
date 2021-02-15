@@ -4,10 +4,12 @@ import Hero1 from '../components/Hero1'
 import Hero2 from '../components/Hero2'
 import Feat1 from '../components/Feat1'
 
-const IndexPage = ({data}) => (
+const IndexPage = ({data}) => {
+  console.log(data)
+  return (
   <div>
     <h1>{data.contentfulPage.title}</h1>
-    {data.contentfulPage.contentModules?.map((content, i) => {
+    {data.contentfulPage.sections?.map((content, i) => {
       if(content.__typename === 'ContentfulHero1') {
         return <Hero1 key={i} content={content}/>
       } else if(content.__typename === 'ContentfulHero2') {
@@ -19,7 +21,7 @@ const IndexPage = ({data}) => (
       }
     })}
   </div>
-)
+)}
 
 export default IndexPage
 
@@ -28,7 +30,7 @@ export const query = graphql`
     contentfulPage(slug: {eq: $slug}) {
       title
       slug
-      contentModules {
+      sections {
         ... on Node {
           ... on ContentfulHero1 {
             header
